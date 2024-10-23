@@ -4,6 +4,8 @@ from pyrep.objects.proximity_sensor import ProximitySensor
 from pyrep.objects.shape import Shape
 from rlbench.backend.conditions import NothingGrasped, DetectedCondition
 from rlbench.backend.task import Task
+from pyrep.objects import VisionSensor
+import math
 
 MEAT = ['chicken', 'steak']
 
@@ -17,8 +19,11 @@ class MeatOffGrill(Task):
         self.register_graspable_objects([self._chicken, self._steak])
         self._w1 = Dummy('waypoint1')
         self._w1z= self._w1.get_position()[2]
+        self.cam_over_shoulder_right = VisionSensor('cam_over_shoulder_right')
 
     def init_episode(self, index: int) -> List[str]:
+        self.cam_over_shoulder_right.set_position([0.20,-0.36,1.85])
+        self.cam_over_shoulder_right.set_orientation([-0.85*math.pi, 0, math.pi])
         conditions = [NothingGrasped(self.robot.gripper)]
         if index == 0:
             x, y, _ = self._chicken.get_position()

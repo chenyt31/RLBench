@@ -31,7 +31,9 @@ class TaskEnvironment(object):
                  dataset_root: str,
                  obs_config: ObservationConfig,
                  static_positions: bool = False,
-                 attach_grasped_objects: bool = True):
+                 attach_grasped_objects: bool = True,
+                 cam_motion=None,
+                 fps=30):
         self._pyrep = pyrep
         self._robot = robot
         self._scene = scene
@@ -91,12 +93,12 @@ class TaskEnvironment(object):
     def get_observation(self) -> Observation:
         return self._scene.get_observation()
 
-    def step(self, action) -> (Observation, int, bool):
+    def step(self, action, record_callback=None) -> (Observation, int, bool):
         # returns observation, reward, done, info
         if not self._reset_called:
             raise RuntimeError(
                 "Call 'reset' before calling 'step' on a task.")
-        self._action_mode.action(self._scene, action)
+        self._action_mode.action(self._scene, action, record_callback)
         success, terminate = self._task.success()
         task_reward = self._task.reward()
         reward = float(success) if task_reward is None else task_reward

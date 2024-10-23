@@ -4,7 +4,8 @@ from pyrep.objects.dummy import Dummy
 from pyrep.objects.joint import Joint
 from rlbench.backend.conditions import JointCondition
 from rlbench.backend.task import Task
-
+from pyrep.objects import VisionSensor
+import math
 
 class OpenDrawer(Task):
 
@@ -15,8 +16,11 @@ class OpenDrawer(Task):
         self._joints = [Joint('drawer_joint_%s' % opt)
                         for opt in self._options]
         self._waypoint1 = Dummy('waypoint1')
+        self.cam_over_shoulder_left = VisionSensor('cam_over_shoulder_left')
 
     def init_episode(self, index: int) -> List[str]:
+        self.cam_over_shoulder_left.set_position([0.2,0.90,1.10])
+        self.cam_over_shoulder_left.set_orientation([0.5*math.pi, 0, 0])
         option = self._options[index]
         self._waypoint1.set_position(self._anchors[index].get_position())
         self.register_success_conditions(

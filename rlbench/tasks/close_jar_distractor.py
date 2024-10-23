@@ -10,7 +10,7 @@ from pyrep.objects.shape import Shape
 from pyrep.objects.proximity_sensor import ProximitySensor
 from pyrep.objects.dummy import Dummy
 
-class CloseJar(Task):
+class CloseJarDistractor(Task):
 
     def init_task(self) -> None:
         self.lid = Shape('jar_lid0')
@@ -18,11 +18,26 @@ class CloseJar(Task):
         self.register_graspable_objects([self.lid])
         self.boundary = Shape('spawn_boundary')
         self.conditions = [NothingGrasped(self.robot.gripper)]
+        self.target_button = Shape('push_button_target')
+        self.target_topPlate = Shape('target_button_topPlate')
+        self.target_wrap = Shape('target_button_wrap')
+        self.stack_blocks_target0 = Shape('stack_blocks_target0')
 
     def init_episode(self, index: int) -> List[str]:
+        _, button_rgb = colors[(index+5)%(len(colors))]
+        self.target_button.set_color(button_rgb)
+        self.target_topPlate.set_color([0.0, 1.0, 0.0])
+        self.target_wrap.set_color([0.0, 1.0, 0.0])
+        _, block_rgb = colors[(index+8)%(len(colors))]
+        self.stack_blocks_target0.set_color(block_rgb)
+
         b = SpawnBoundary([self.boundary])
         for obj in self.jars:
             b.sample(obj, min_distance=0.01)
+        b.sample(self.target_button, min_distance=0.01)
+        b.sample(self.stack_blocks_target0, min_distance=0.01)
+
+
         success = ProximitySensor('success')
         success.set_position([0.0, 0.0, 0.05], relative_to=self.jars[index % 2],
                              reset_dynamics=False)

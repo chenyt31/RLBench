@@ -187,7 +187,7 @@ class EndEffectorPoseViaPlanning(ArmActionMode):
     def set_callable_each_step(self, callable_each_step):
         self._callable_each_step = callable_each_step
 
-    def action(self, scene: Scene, action: np.ndarray, ignore_collisions: bool = True):
+    def action(self, scene: Scene, action: np.ndarray, ignore_collisions: bool = True, record_callback=None):
         assert_action_shape(action, (7,))
         assert_unit_quaternion(action[3:])
         if not self._absolute_mode and self._frame != 'end effector':
@@ -255,6 +255,8 @@ class EndEffectorPoseViaPlanning(ArmActionMode):
         while not done:
             done = path.step()
             scene.step()
+            if record_callback is not None:
+                record_callback()     
             if self._callable_each_step is not None:
                 # Record observations
                 self._callable_each_step(scene.get_observation())

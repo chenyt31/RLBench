@@ -128,7 +128,7 @@ class Environment(object):
             self._pyrep.shutdown()
         self._pyrep = None
 
-    def get_task(self, task_class: Type[Task]) -> TaskEnvironment:
+    def get_task(self, task_class: Type[Task], cam_motion=None, fps=30) -> TaskEnvironment:
 
         # If user hasn't called launch, implicitly call it.
         if self._pyrep is None:
@@ -140,7 +140,8 @@ class Environment(object):
         return TaskEnvironment(
             self._pyrep, self._robot, self._scene, task,
             self._action_mode, self._dataset_root, self._obs_config,
-            self._static_positions, self._attach_grasped_objects)
+            self._static_positions, self._attach_grasped_objects,
+            cam_motion, fps)
 
     @property
     def action_shape(self):

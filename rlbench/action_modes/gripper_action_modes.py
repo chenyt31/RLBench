@@ -43,7 +43,7 @@ class Discrete(GripperActionMode):
             scene.pyrep.step()
             scene.task.step()
 
-    def action(self, scene: Scene, action: np.ndarray):
+    def action(self, scene: Scene, action: np.ndarray, record_callback=None):
         assert_action_shape(action, self.action_shape(scene.robot))
         if 0.0 > action[0] > 1.0:
             raise InvalidActionError(
@@ -71,6 +71,8 @@ class Discrete(GripperActionMode):
                 for _ in range(10):
                     scene.pyrep.step()
                     scene.task.step()
+                    if record_callback is not None:
+                        record_callback()
 
     def action_shape(self, scene: Scene) -> tuple:
         return 1,

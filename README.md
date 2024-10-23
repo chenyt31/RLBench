@@ -3,12 +3,9 @@
 ![task grid image missing](readme_files/task_grid.png)
 
 ## Modifications
- This is my fork of RLBench. Modifications include:
-- 6 new tasks, bug fixes, and extensions of existing tasks. See Appendix A in the [paper](https://peract.github.io/) for details.
-- Data generation also records if `ignore_collisions` was used with a waypoint for motion-planning. 
-- `data_generator.py` supports an "all_variations" setting that samples from all possible task variations. 
-
-I branched off `master` in Feb 2022, so this fork is not up to date with the latest changes in the official repo.
+This is my fork of [RLBench](https://github.com/chenyt31/RLBench/tree/peract), and compared to the [peract fork of RLBench](https://github.com/MohitShridhar/RLBench/tree/peract), the modifications include:
+- 8 new tasks, bug fixes, and modification of existing tasks(Camera position and the success condition for close_jar). See Appendix B in the [paper](https://gravmad.github.io/) for details.
+- Video recording feature 
 
 ## RLBench
 

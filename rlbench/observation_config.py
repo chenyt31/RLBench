@@ -11,7 +11,7 @@ class CameraConfig(object):
                  point_cloud=True,
                  mask=True,
                  image_size=(128, 128),
-                 render_mode=RenderMode.OPENGL3,
+                 render_mode=RenderMode.OPENGL,
                  masks_as_one_channel=True,
                  depth_in_meters=False):
         self.rgb = rgb

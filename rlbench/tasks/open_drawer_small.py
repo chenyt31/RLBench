@@ -1,17 +1,13 @@
 from typing import List, Tuple
-
 import numpy as np
 from pyrep.objects.dummy import Dummy
 from pyrep.objects.joint import Joint
-from pyrep.objects.proximity_sensor import ProximitySensor
-from pyrep.objects.shape import Shape
-from rlbench.backend.conditions import DetectedCondition
+from rlbench.backend.conditions import JointCondition
 from rlbench.backend.task import Task
 from pyrep.objects import VisionSensor
 import math
 
-
-class PutItemInDrawer(Task):
+class OpenDrawerSmall(Task):
 
     def init_task(self) -> None:
         self._options = ['bottom', 'middle', 'top']
@@ -19,24 +15,20 @@ class PutItemInDrawer(Task):
                          for opt in self._options]
         self._joints = [Joint('drawer_joint_%s' % opt)
                         for opt in self._options]
-        self._waypoint1 = Dummy('waypoint2')
-        self._item = Shape('item')
-        self.register_graspable_objects([self._item])
+        self._waypoint1 = Dummy('waypoint1')
         self.cam_over_shoulder_left = VisionSensor('cam_over_shoulder_left')
 
-    def init_episode(self, index) -> List[str]:
-        self.cam_over_shoulder_left.set_position([0.2,0.90,1.15])
+    def init_episode(self, index: int) -> List[str]:
+        self.cam_over_shoulder_left.set_position([0.2,0.90,1.10])
         self.cam_over_shoulder_left.set_orientation([0.5*math.pi, 0, 0])
         option = self._options[index]
-        anchor = self._anchors[index]
-        self._waypoint1.set_position(anchor.get_position())
-        success_sensor = ProximitySensor('success_' + option)
+        self._waypoint1.set_position(self._anchors[index].get_position())
         self.register_success_conditions(
-            [DetectedCondition(self._item, success_sensor)])
-        return ['put the item in the %s drawer' % option,
-                'put the block away in the %s drawer' % option,
-                'open the %s drawer and place the block inside of it' % option,
-                'leave the block in the %s drawer' % option]
+            [JointCondition(self._joints[index], 0.15)])
+        return ['open the %s drawer' % option,
+                'grip the %s handle and pull the %s drawer open' % (
+                    option, option),
+                'slide the %s drawer open' % option]
 
     def variation_count(self) -> int:
         return 3

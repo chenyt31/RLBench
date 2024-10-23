@@ -6,7 +6,7 @@ from rlbench.backend.conditions import JointCondition
 from rlbench.backend.task import Task
 
 
-class CloseDrawer(Task):
+class CloseDrawerSmall(Task):
 
     def init_task(self) -> None:
         self._options = ['bottom', 'middle', 'top']
