@@ -36,11 +36,6 @@ colors = [
     ('white', (1.0, 1.0, 1.0)),
 ]
 
-def log_to_file(message):
-    with open('/data1/cyt/3d_diffuser_actor/RLBench/debug_log.txt', 'a') as file:
-        file.write(message + '\n')
-
-
 
 class PushButtonsLight(Task):
 
@@ -71,19 +66,20 @@ class PushButtonsLight(Task):
             tp.set_color([1.0, 0.0, 0.0])
         for w in self.target_wraps:
             w.set_color([1.0, 0.0, 0.0])
+            
         # For each color permutation, we want to have 1, 2 or 3 buttons pushed
         color_index = int(index / MAX_TARGET_BUTTONS)
         self.buttons_to_push = 1 + index % MAX_TARGET_BUTTONS
         chosen_color_name, chosen_color_rgb = colors[color_index]
         
-        for b in self.target_buttons:
-            b.set_color(chosen_color_rgb)
+        for i, button in enumerate(self.target_buttons):
+            if i < self.buttons_to_push:
+                b.set_color(chosen_color_rgb)
         
-        # Set the color of the color bulb (assuming 'color_bulb' is an instance of Shape)
+        # Set the color of the color bulb
         self.color_bulb.set_color(chosen_color_rgb)
 
         # Update success conditions to require all buttons to match the chosen color
-
         self.success_conditions = []
         for i in range(self.buttons_to_push):
             self.success_conditions.append(self.goal_conditions[i])
@@ -91,14 +87,7 @@ class PushButtonsLight(Task):
         self.register_success_conditions(
             [ConditionSet(self.success_conditions, True, False)])
         
-        b = SpawnBoundary([self.boundaries])
-        for button in self.target_buttons:
-            b.sample(button, min_distance=0.1)
-
-        b.sample(self.light_bulb, min_distance=0.1) # color sample
-
-
-
+        # set the color of distractor
         num_non_targets = 3 - self.buttons_to_push
         
         spare_colors = list(set(colors)
@@ -120,11 +109,13 @@ class PushButtonsLight(Task):
                 _, rgb = spare_colors[color_choice_indexes[non_target_index]]
                 button.set_color(rgb)
                 non_target_index += 1
-        # for i, button in enumerate(self.target_buttons):
-        #     if i == 1:
-        #         button.set_color([1.0, 1.0, 0.0])
-        #     if i == 2:
-        #         button.set_color([0.5, 0.0, 0.5])
+
+        b = SpawnBoundary([self.boundaries])
+        for button in self.target_buttons:
+            b.sample(button, min_distance=0.1)
+
+        b.sample(self.light_bulb, min_distance=0.1) # color sample
+
         return ['push the button with the same color as the light',
                 'press the button with the color of the light',
                 'press the button with the same color as the light']

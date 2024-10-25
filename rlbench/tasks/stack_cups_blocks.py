@@ -71,7 +71,7 @@ class StackCupsBlocks(Task):
         for block in self.distractors:
             self.boundary.sample(block, min_distance=0.1)
 
-        return ['identify the color with the most blocks, choose that color for the base cup, and stack the other cups on top of it.']
+        return ['Identify the most common color in the block pile, and stack the other cups on the cup that matches that color']
 
     def variation_count(self) -> int:
         return len(colors)
