@@ -74,7 +74,7 @@ class PushButtonsLight(Task):
         
         for i, button in enumerate(self.target_buttons):
             if i < self.buttons_to_push:
-                b.set_color(chosen_color_rgb)
+                button.set_color(chosen_color_rgb)
         
         # Set the color of the color bulb
         self.color_bulb.set_color(chosen_color_rgb)
